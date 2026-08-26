@@ -1,3 +1,12 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const http = require("http");
+const { Server } = require("socket.io");
+
+
 const yargs  = require("yargs");
 const { hideBin } = require("yargs/helpers");
 
@@ -8,7 +17,10 @@ const {pushRepo } = require("./controllers/push");
 const {pullRepo } = require("./controllers/pull");
 const { revertRepo } = require("./controllers/revert");
 
+
+dotenv.config();
 yargs(hideBin(process.argv))
+.command("start", "Starting the server", {} , startServer)
 .command("init", "Initialse a new repository", {} , initRepo)
 .command("add <file>", "Add file to the repository", (yargs) => {
     yargs.positional("file",{
@@ -44,3 +56,48 @@ yargs(hideBin(process.argv))
 ) 
 .demandCommand(1, "You need atleast one command")
 .help().argv;
+
+
+function startServer(){
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(bodyParser.json());
+    app.use(express.json());
+    const mongoURI = process.env.MONGODB_URI;
+    
+    mongoose.connect(mongoURI).then(() => console.log("MongoDB Connection created!")).catch((err) => console.error("Error in connection: " + err));
+    console.log("Starting the server");
+
+    app.use(cors({origin:"*"}));
+    
+    app.get("/", (req, res) => {
+        res.send("Welcome");
+    });
+
+    const httpServer = http.createServer(app);
+    const io = new Server(httpServer, {
+         cors: { origin: "*",
+        method: ["GET", "POST"],
+    }
+    });
+
+    io.on("connection", (socket) => {
+        socket.on("joinRoom", (userID) => {
+            user = userID;
+            console.log("=====");
+            console.log(user);
+            console.log("=====");
+            socket.join(userID);
+        });
+    } );
+
+    const db = mongoose.connection;
+    db.once("open", async() => {
+        console.log("CRUD operations called!");
+    });
+
+    httpServer.listen(port, () => {
+        console.log(`The server is running on PORT: ${port}`)
+    })
+}
