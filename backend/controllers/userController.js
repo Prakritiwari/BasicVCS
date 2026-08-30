@@ -161,8 +161,8 @@ async function deleteUserProfile(req, res) {
         const db = await client.db("basicvcs");
         const userCollection = await db.collection("users");
 
-        const result = await usersCollection.deleteOne({
-            _id: new ObjectId(currentID),
+        const result = await userCollection.deleteOne({
+            _id: new ObjectId(id),
         });
 
         if (result.deleteCount == 0) {
