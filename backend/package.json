@@ -2,8 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "basicvcs": "index.js"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "cli": "node cli/index.js"
   },
   "keywords": [],
   "author": "",

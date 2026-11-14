@@ -42,11 +42,16 @@ async function signup(req, res) {
 
         const result = await userCollection.insertOne(newUser);
 
-        const token = jwt.sign({ id: result.insertId }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
-        res.json(token);
+        const token = jwt.sign({ id: result.insertedId }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
+        res.status(201).json({
+            message: "User created!",
+            token,
+            userId: result.insertedId,
+        });
 
     } catch (err) {
         console.error("Unable to signup: ", err);
+        res.status(500).json({ message: "Unable to signup!" });
     }
 
 }
@@ -64,14 +69,52 @@ async function login(req, res) {
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            res.status(400).json({ message: "Invalid Credentials!" });
-
+            return res.status(400).json({ message: "Invalid Credentials!" });
         }
         const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
-        res.send({ token, userId: user._id });
+        res.send({ token, userId: user._id.toString() });
     } catch (err) {
         console.error("Error while logging in:", err.message);
         res.status(500).send("Internal Server Error!");
+    }
+}
+
+async function cliLogin(req, res) {
+    const { email, password } = req.body;
+
+    try {
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required." });
+        }
+
+        await connectClient();
+        const db = await client.db("basicvcs");
+        const userCollection = await db.collection("users");
+        const user = await userCollection.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid credentials!" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials!" });
+        }
+
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "30d" }
+        );
+
+        res.json({
+            token,
+            userId: user._id.toString(),
+            username: user.username,
+        });
+    } catch (err) {
+        console.error("Error while CLI login:", err.message);
+        res.status(500).json({ message: "Could not sign in." });
     }
 }
 
@@ -82,7 +125,9 @@ async function getAllUsers(req, res) {
         const db = await client.db("basicvcs");
         const userCollection = await db.collection("users");
 
-        const users = await userCollection.find({}).toArray();
+        const users = await userCollection
+            .find({}, { projection: { password: 0 } })
+            .toArray();
         res.json(users);
 
 
@@ -103,14 +148,21 @@ async function getUserProfile(req, res) {
         const db = await client.db("basicvcs");
         const userCollection = await db.collection("users");
 
-        const user = await userCollection.findOne({
-            _id: new ObjectId(id)
-        });
+        const user = await userCollection.findOne(
+            { _id: new ObjectId(id) },
+            { projection: { password: 0 } }
+        );
 
         if (!user) {
-            res.status(404).json({ message: "User not found! " });
+            return res.status(404).json({ message: "User not found! " });
         }
-        res.send(user, { messge: "User profile fetched! " });
+
+        // Email is only visible to the account owner; everyone else gets the public profile.
+        if (String(user._id) !== String(req.user?.id)) {
+            delete user.email;
+        }
+
+        res.json(user);
 
     } catch (err) {
         console.error("Error while fetching details! ", err.message);
@@ -138,14 +190,18 @@ async function updateUserProfile(req, res) {
         const result = await userCollection.findOneAndUpdate(
             { _id: new ObjectId(id) },
             { $set: updatedFields },
-            { ReturnDocument: "after" }
+            { returnDocument: "after" }
         );
 
-        if (!result.value) {
+        // mongodb driver >= 6 returns the document directly; older versions wrap it in { value }.
+        const updatedUser = result?.value ?? result;
+
+        if (!updatedUser) {
             return res.status(404).json({ message: "User not found!" });
         }
 
-        res.send(result.value);
+        const { password: _password, ...user } = updatedUser;
+        res.send(user);
 
     } catch (err) {
         console.error("Error while updating details! ", err.message);
@@ -165,7 +221,7 @@ async function deleteUserProfile(req, res) {
             _id: new ObjectId(id),
         });
 
-        if (result.deleteCount == 0) {
+        if (result.deletedCount === 0) {
             return res.status(404).json({ message: "User not found!" });
         }
 
@@ -182,6 +238,7 @@ module.exports = {
     getAllUsers,
     signup,
     login,
+    cliLogin,
     updateUserProfile,
     deleteUserProfile
 }   

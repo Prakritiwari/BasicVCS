@@ -1,0 +1,264 @@
+.app {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ---------------- Rail ---------------- */
+
+.rail {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  height: 100vh;
+  padding: 20px 10px;
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+  z-index: 40;
+}
+
+.rail-brand {
+  display: inline-flex;
+  padding: 2px;
+}
+
+.rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.rail-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 11px 4px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  transition: color 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.rail-link:hover {
+  color: var(--pastel-lilac-ink);
+  background: var(--pastel-lilac);
+  border-color: var(--pastel-lilac-line);
+}
+
+.rail-link.is-active {
+  color: var(--ink);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.rail-link.is-active span {
+  color: var(--bg);
+}
+
+.rail-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.rail-user {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 50%;
+}
+
+.rail-logout {
+  cursor: pointer;
+}
+
+/* ---------------- Top bar ---------------- */
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(240px, 460px) minmax(120px, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(240, 240, 240, 0.86);
+  backdrop-filter: blur(14px);
+}
+
+.app-title {
+  color: var(--muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.app-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.app-search svg {
+  position: absolute;
+  left: 14px;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+.app-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 0.86rem;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.app-search input::placeholder {
+  color: var(--faint);
+}
+
+.app-search input:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07);
+}
+
+.app-search-spacer {
+  display: block;
+}
+
+.app-user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  min-width: 0;
+}
+
+.app-username {
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.app-content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 34px 32px 64px;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 900px) {
+  .app {
+    display: block;
+    padding-bottom: 72px;
+  }
+
+  .rail {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 64px;
+    padding: 8px 14px;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    background: rgba(240, 240, 240, 0.96);
+    backdrop-filter: blur(14px);
+  }
+
+  .rail-brand,
+  .rail-user {
+    display: none;
+  }
+
+  .rail-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    flex: 1;
+    gap: 4px;
+  }
+
+  .rail-link {
+    width: auto;
+    padding: 7px 16px;
+    font-size: 0.56rem;
+  }
+
+  .rail-foot {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .rail-logout {
+    width: auto;
+    padding: 7px 12px;
+  }
+
+  .app-topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 12px 18px;
+  }
+
+  .app-title {
+    display: none;
+  }
+
+  .app-username {
+    display: none;
+  }
+
+  .app-content {
+    padding: 24px 18px 40px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-search input {
+    height: 38px;
+    font-size: 0.82rem;
+  }
+
+  .rail-link {
+    padding: 6px 12px;
+  }
+}

@@ -27,4 +27,5 @@ const issueRepository = new Schema({
 });
 
 const Issue = mongoose.model("Issue", issueRepository);
-export default Issue;
+
+module.exports = Issue;

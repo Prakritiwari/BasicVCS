@@ -1,1 +1,7 @@
-{}
+{
+  "repoId": "6af81f20fe494051e03fa184",
+  "repoName": "my project",
+  "apiUrl": "http://localhost:3000",
+  "s3Prefix": "repos/6af81f20fe494051e03fa184/",
+  "linkedAt": "2026-11-14T13:57:01.557Z"
+}

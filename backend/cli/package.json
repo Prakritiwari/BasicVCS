@@ -1,0 +1,23 @@
+{
+  "name": "basicvcs-cli",
+  "version": "1.0.0",
+  "description": "Command line client for BasicVCS",
+  "main": "index.js",
+  "bin": {
+    "basicvcs": "index.js"
+  },
+  "files": [
+    "index.js",
+    "api.js",
+    "config.js"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "uuid": "^14.0.1",
+    "yargs": "^18.1.0"
+  },
+  "keywords": ["vcs", "version-control", "cli", "s3"],
+  "license": "ISC"
+}

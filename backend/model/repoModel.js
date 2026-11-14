@@ -27,14 +27,15 @@ const RepositorySchema = new Schema({
         required: true,
     },
 
-    issue:[
+    issues: [
         {
-        type: Schema.Types.ObjectId,
-        ref: "Issues",
-    },
-]
-    
-})
+            type: Schema.Types.ObjectId,
+            ref: "Issue",
+            default: [],
+        },
+    ],
+});
 
 const Repository = mongoose.model("Repository", RepositorySchema);
-export default Repository;
+
+module.exports = Repository;

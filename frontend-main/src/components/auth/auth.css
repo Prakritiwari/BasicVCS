@@ -1,0 +1,127 @@
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.auth-page::before,
+.auth-page::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-page::before {
+  width: 460px;
+  height: 460px;
+  top: -180px;
+  right: -120px;
+  background: var(--pastel-lilac);
+  opacity: 0.6;
+}
+
+.auth-page::after {
+  width: 380px;
+  height: 380px;
+  bottom: -170px;
+  left: -120px;
+  background: var(--pastel-sage);
+  opacity: 0.55;
+}
+
+.auth-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 20px;
+}
+
+.auth-brand {
+  margin-bottom: 26px;
+}
+
+.auth-card {
+  width: min(460px, 100%);
+  padding: clamp(26px, 5vw, 40px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  margin-top: 16px;
+  font-size: clamp(2rem, 4.4vw, 2.6rem);
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.auth-sub {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.auth-error {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #d8bcbc;
+  border-radius: var(--radius-sm);
+  background: #f7eded;
+  color: #7d2f2f;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.auth-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.auth-switch a {
+  color: var(--ink);
+  font-weight: 500;
+  border-bottom: 1px solid var(--ink);
+}
+
+.auth-switch svg {
+  color: var(--faint);
+}
+
+.auth-foot {
+  margin-top: 22px;
+  color: var(--faint);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .auth-main {
+    padding: 40px 16px;
+  }
+}
